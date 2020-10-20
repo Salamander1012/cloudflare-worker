@@ -1,7 +1,3 @@
-addEventListener('fetch', event => {
-  event.respondWith(handleRequest(event.request))
-})
-
 const LINKS = [
   { "name": "Salman's LinkedIn", "url": "https://www.linkedin.com/in/salmanfakhri/" },
   { "name": "Salman's Github", "url": "https://github.com/Salamander1012" },
@@ -18,10 +14,16 @@ const TEMPLATE_URL = "https://static-links-page.signalnerve.workers.dev"
 
 const AVATAR_SRC = 'https://scontent-ort2-2.cdninstagram.com/v/t51.2885-15/e35/s1080x1080/62269364_357864154871369_5398838332881324654_n.jpg?_nc_ht=scontent-ort2-2.cdninstagram.com&_nc_cat=105&_nc_ohc=8qYz3Zbt-P4AX_-yMpv&_nc_tp=15&oh=a1a8a380fddab6f2d1b5575c79e31ce8&oe=5FB6298A'
 
+const NAME = "Salman Fakhri"
+
 /**
- * Respond with hello worker text
- * @param {Request} request
+ * Handle requests
  */
+
+addEventListener('fetch', event => {
+  event.respondWith(handleRequest(event.request))
+})
+
 async function handleRequest(request) {
   const url = new URL(request.url)
   
@@ -40,6 +42,10 @@ async function handleRequest(request) {
   const html_template = await fetch(TEMPLATE_URL, init)
   return rewriter.transform(html_template)
 }
+
+/**
+ * HTML Transformers
+ */
 
 class BackgroundTransformer {   
   async element(element) {
@@ -110,10 +116,10 @@ class SocialLinksTransformer {
 }
 
 const rewriter = new HTMLRewriter()
-  .on("title", new TextTransformer('Salman Fakhri'))
+  .on("title", new TextTransformer(NAME))
   .on("body", new BackgroundTransformer())
   .on("div#profile", new ProfileTransformer())
   .on("div#profile img#avatar", new ImageTransformer(AVATAR_SRC))
-  .on("div#profile h1#name", new TextTransformer('Salman Fakhri'))
+  .on("div#profile h1#name", new TextTransformer(NAME))
   .on("div#links", new LinksTransformer(LINKS))
   .on("div#social", new SocialLinksTransformer(SOCIALS))
